@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="play.png">
+	<!-- Created with Adobe Animate version 21.0.3.38773 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="hover0000" x="0" y="0" width="450" height="40"/>
+	<SubTexture name="idle0000" x="0" y="41" width="450" height="40"/>
+</TextureAtlas>
