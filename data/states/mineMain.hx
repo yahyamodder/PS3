@@ -56,15 +56,10 @@ function create(){
 	logo.antialiasing = false;
 	add(logo);
 
-	tabShit = new FunkinText(5, FlxG.height, 0, 'Press TAB to go back to the XMB.');
+	tabShit = new FunkinText(5, FlxG.height, 0, 'Work in Progress! | Press TAB to go back to the XMB.');
 	tabShit.y -= tabShit.height;
+	tabShit.antialiasing = false;
 	add(tabShit);
-
-	shopTxt = new FunkinText(5, 425, 0, 'This menu is currently in the works! Check back here whenever another shit comes out.');
-	shopTxt.screenCenter(FlxAxes.X);
-	shopTxt.scale.set(0, 0);
-	shopTxt.color = FlxColor.RED;
-	add(shopTxt);
 
 	for (i=>option in optionShit){
 		var menuItem:FlxSprite = new FlxSprite(148, 0);
@@ -110,11 +105,14 @@ function goToItem() {
 
 	switch (optionShit[curSelected]){
 		case "play":
-			FlxG.sound.play(Paths.sound("locked"), 0.7);
+			//FlxG.sound.play(Paths.sound("locked"), 0.7);
 			//gyat
 		case "mini":
-			FlxG.switchState(new FreeplayState());
 			FlxG.sound.play(Paths.sound('mineClick'), 0.7);
+			xButton.animation.play('select');
+			new FlxTimer().start(.1, function(tmr:FlxTimer){
+			FlxG.switchState(new FreeplayState());
+			});
 		case "leaderboard":
 			optionSelected.setPosition(40, 289);
 			new FlxTimer().start(1, (_) -> FlxG.switchState(new ModState("GraphicsOptions")));
@@ -157,42 +155,6 @@ function update(elapsed){
 		FlxG.camera.fade(FlxColor.BLACK, 0.5, false);
 		new FlxTimer().start(.75, function(tmr:FlxTimer){
 			FlxG.switchState(new TitleState());
-		});
-	}
-}
-
-function selectItem(){
-	var option = optionShit[curSelected];
-	if (option == "Innersloth") FlxG.openURL('https://www.innersloth.com/');
-	else if (option == "Shop"){
-		locked.play();
-
-		// my own custom shake thingy :)
-		if (FlxG.save.data.screenShake){
-			shakeTweenX = FlxTween.tween(FlxG.camera, {x: FlxG.camera.x + 4}, .02, {ease: FlxEase.sineOut, type: 4});
-			shakeTweenY = FlxTween.tween(FlxG.camera, {y: FlxG.camera.y + 8}, .04, {ease: FlxEase.sineOut, type: 4});
-			shakeTweenAngle = FlxTween.tween(FlxG.camera, {angle: FlxG.camera.angle + 1}, .0325, {ease: FlxEase.quartOut, type: 4});
-			new FlxTimer().start(.375, function(tmr:FlxTimer){
-				FlxG.camera.setPosition(0, 0);
-				FlxG.camera.angle = 0;
-				for (i in [shakeTweenX, shakeTweenY, shakeTweenAngle]) i.cancel();
-			});
-		}
-
-		shopTxtTween = FlxTween.tween(shopTxt.scale, {x: 1.5, y: 1.5}, .25, {ease: FlxEase.bounceOut});
-		new FlxTimer().start(7.5, function(tmr:FlxTimer){
-			shopTxtTween = FlxTween.tween(shopTxt.scale, {x: 0, y: 0}, .5, {ease: FlxEase.elasticInOut});
-		});
-	}else{
-		selectedSomethin = true;
-		confirm.play();
-		xButton.animation.play('select');
-		oButton.animation.play('select');
-	
-		FlxG.camera.fade(FlxColor.BLACK, 0.7, false);
-		
-		new FlxTimer().start(1, function(tmr:FlxTimer){
-			switchState();
 		});
 	}
 }
