@@ -17,10 +17,14 @@ var confirm, cancel, locked:FlxSound;
 
 var shopTxtTween, shakeTweenX, shakeTweenY, shakeTweenAngle:FlxTween;
 
+var isNoticed:Bool = true;
+var canSelect:Bool = true;
+
 var curSelected:Int = 0;
 
 function create(){
-	CoolUtil.playMenuSong();
+	//CoolUtil.playMenuSong(Paths.music("calm" + FlxG.random.int(1, 3)));
+	FlxG.sound.playMusic(Paths.music("calm" + FlxG.random.int(1,3)));
 	FlxG.mouse.visible = true;
 
 	// loads sounds in for no lag when selecting something
@@ -46,9 +50,9 @@ function create(){
 
 	xButton = new FlxSprite(62, 655);
 	xButton.frames = Paths.getSparrowAtlas('mine/select');
-	xButton.animation.addByPrefix('idle', 'select', 1, true);
+	xButton.animation.addByPrefix('idle', 'select0', 1, false);
 	xButton.animation.addByPrefix('select', 'selected', 1, false);
-	xButton.animation.play('idle');
+	//xButton.animation.play('idle');
 	xButton.antialiasing = false;
 	add(xButton);
 
@@ -77,6 +81,18 @@ function create(){
 	add(menuItems);	
 	//onChangeItem(0);
 	updateItems();
+
+	notice = new FlxSprite(365,220).loadGraphic(Paths.image('mine/notice'));
+	notice.alpha = 0;
+	add(notice);
+
+	autosave = new FlxSprite(619, 260);
+	autosave.frames = Paths.getSparrowAtlas('mine/autosave'); //this was a PAIN in the ass 🙏🏽🙏🏽😭
+	autosave.animation.addByPrefix('save', 'saving', 20, true);
+	autosave.animation.play('save');
+	autosave.antialiasing = false;
+	autosave.alpha = 0;
+	add(autosave);
 }
 
 function onChangeItem(change) {
@@ -88,7 +104,7 @@ function onChangeItem(change) {
 
 		if (spr.ID == curSelected){
 			spr.animation.play('hover', true);
-	        FlxG.sound.play(Paths.sound("locked"), 0.7);
+	        //FlxG.sound.play(Paths.sound("locked"), 0.7);
 		}
 		else spr.animation.play('idle');
 
@@ -98,6 +114,7 @@ function onChangeItem(change) {
 }
 
 function goToItem() {
+	if (canSelect){
 	optionsSelectedSomethin = true;
 	var optionSelected = menuItems.members[curSelected];
 	optionSelected.animation.play('select');
@@ -117,13 +134,14 @@ function goToItem() {
 			optionSelected.setPosition(40, 289);
 			new FlxTimer().start(1, (_) -> FlxG.switchState(new ModState("GraphicsOptions")));
 		case "options":
-			optionSelected.setPosition(134, 449);
-			new FlxTimer().start(1, (_) -> FlxG.switchState(new ModState("MiscOptions")));
+			FlxG.sound.play(Paths.sound('mineClick'), 0.7);
+			xButton.animation.play('select');
+			new FlxTimer().start(.1, (_) -> FlxG.switchState(new OptionsMenu()));
 		case "store":
 			//gyaaatttsssss
 
 		default: optionsSelectedSomethin = false;
-	}
+	}}
 }
 
 var selectedSomethin:Bool = false;
@@ -133,7 +151,7 @@ function update(elapsed){
 
 	if (controls.DOWN_P || FlxG.mouse.wheel < 0) onChangeItem(1);
 	if (controls.UP_P || FlxG.mouse.wheel > 0) onChangeItem(-1);
-	if (controls.ACCEPT || FlxG.mouse.justPressed) {
+	if (controls.ACCEPT && !isNoticed) {
 		goToItem();
 		xButton.animation.play('select');
 	}
@@ -156,6 +174,24 @@ function update(elapsed){
 		new FlxTimer().start(.75, function(tmr:FlxTimer){
 			FlxG.switchState(new TitleState());
 		});
+	}
+
+	if (controls.ACCEPT && isNoticed){
+		isNoticed = false;
+		FlxG.sound.play(Paths.sound('mineClick'), 0.7);
+		xButton.animation.play('select');
+		new FlxTimer().start(1, (_) -> xButton.animation.play('idle'));
+	}
+
+	if (isNoticed) {
+		canSelect = false;
+		oButton.alpha = 0;
+		notice.alpha = autosave.alpha = 1;
+	}
+	else {
+		canSelect = true;
+		notice.alpha = autosave.alpha = 0;
+		oButton.alpha = 1;
 	}
 }
 

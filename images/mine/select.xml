@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TextureAtlas imagePath="select.png">
-	<SubTexture name="select" x="0" y="0" width="94" height="30"/>
+	<SubTexture name="select0" x="0" y="0" width="94" height="30"/>
 	<SubTexture name="selected" x="0" y="31" width="94" height="30"/>
 </TextureAtlas>

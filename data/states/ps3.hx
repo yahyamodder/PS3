@@ -6,13 +6,14 @@ import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 
 
-var background:FlxSprite;
+var bar:FlxSprite;
 var playButton:FlxButton;
 
 function create(){
-    // Create background
-    background = new FlxSprite(0, 0).loadGraphic("assets/background.png");
-    //add(background);
+    // Create bar
+    bar = new FlxSprite(600, 0).loadGraphic("bar.png");
+    bar.alpha = 0;
+    add(bar);
 
     // Create play button
     playButton = new FlxButton(100, 100, "Play", onClick);
@@ -39,8 +40,8 @@ function create(){
     //creditsButton.animation.play("idle");
     
     // Add some flair with a fade-in effect
-    FlxTween.tween(background, { alpha: 1 }, 1, { ease: FlxEase.circInOut });
-    FlxTween.tween(menuGroup, { alpha: 1 }, 1, { ease: FlxEase.circInOut });
+    FlxTween.tween(bar, {alpha: 1}, 1);
+    //FlxTween.tween(menuGroup, { alpha: 1 }, 1, { ease: FlxEase.circInOut });
 }
     
 function onClickPlay(){
